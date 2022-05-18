@@ -40,4 +40,8 @@ public class UserService {
         }
         return user;
     }
+
+   public User findUserByEmail(String email){
+        return usersMap.getOrDefault(email, null);
+    }
 }
