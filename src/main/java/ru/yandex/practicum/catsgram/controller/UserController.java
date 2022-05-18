@@ -31,4 +31,9 @@ public class UserController {
     User refreshUser(@RequestBody User user) {
         return userService.refreshUser(user);
     }
+
+    @GetMapping("/user/{email}")
+  public User findUserByEmail(@PathVariable String email) {
+       return userService.findUserByEmail(email);
+    }
 }
