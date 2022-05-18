@@ -6,9 +6,7 @@ import ru.yandex.practicum.catsgram.exception.PostNotFoundException;
 import ru.yandex.practicum.catsgram.exception.UserNotFoundException;
 import ru.yandex.practicum.catsgram.model.Post;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class PostService {
@@ -21,8 +19,24 @@ public class PostService {
         this.userService = userService;
     }
 
-    public List<Post> findAll() {
-        return posts;
+    public List<Post> findAll(int size, int from, String sort) {
+        int to = size + from;
+        if (to > posts.size() - 1) {
+            to = posts.size() - 1;
+        }
+        if (from >= posts.size()) {
+            return null;
+        }
+        List<Post> tempList = posts.subList(from, to);
+        Collections.sort(tempList, new Comparator<Post>() {
+            @Override
+            public int compare(final Post o1, final Post o2) {
+                if (sort.equals("asc")) {
+                    return o1.getCreationDate().compareTo(o2.getCreationDate());
+                } else return o1.getCreationDate().compareTo(o2.getCreationDate()) < 0 ? 1 : -1;
+            }
+        });
+        return tempList;
     }
 
     public Post create(Post post) {
@@ -32,7 +46,7 @@ public class PostService {
         } else throw new UserNotFoundException("Пользователь " + post.getAuthor() + " не найден");
     }
 
-   public Post findById(Integer postId) {
+    public Post findById(Integer postId) {
         return posts.stream()
                 .filter(x -> Objects.equals(x.getId(), postId))
                 .findFirst()
