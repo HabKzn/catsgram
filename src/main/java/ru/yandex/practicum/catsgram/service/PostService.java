@@ -7,11 +7,12 @@ import ru.yandex.practicum.catsgram.exception.UserNotFoundException;
 import ru.yandex.practicum.catsgram.model.Post;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
 
-    UserService userService;
+    private UserService userService;
     private final List<Post> posts = new ArrayList<>();
 
     @Autowired
@@ -51,5 +52,23 @@ public class PostService {
                 .filter(x -> Objects.equals(x.getId(), postId))
                 .findFirst()
                 .orElseThrow(() -> new PostNotFoundException(String.format("Пост № %d не найден", postId)));
+    }
+
+    public UserService getUserService() {
+        return userService;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public List<Post> findAllByUserEmail(String email, Integer size, String sort) {
+        return posts.stream().filter(p -> email.equals(p.getAuthor())).sorted((p0, p1) -> {
+            int comp = p0.getCreationDate().compareTo(p1.getCreationDate());
+            if(sort.equals("desc")){
+                comp = -1 * comp;
+            }
+            return comp;
+        }).limit(size).collect(Collectors.toList());
     }
 }
