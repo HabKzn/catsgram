@@ -41,7 +41,7 @@ public class PostService {
     }
 
     public Post create(Post post) {
-        if (userService.findUserByEmail(post.getAuthor()) == null) {
+        if (userService.findUserById(post.getAuthor()).isEmpty()) {
             posts.add(post);
             return post;
         } else throw new UserNotFoundException("Пользователь " + post.getAuthor() + " не найден");
